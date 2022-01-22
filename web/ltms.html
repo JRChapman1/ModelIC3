@@ -1,0 +1,348 @@
+<html>
+
+
+<head>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+  <style type="text/css">
+    /* CSS rules are kept repetitive so that you can get CSS rules for each button easily :) */
+
+*
+{
+    user-select: none;
+    -webkit-tap-highlight-color:transparent;
+}
+
+*:focus
+{
+    outline: none;
+}
+
+body
+{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background-color: #f1f9f9;
+}
+
+img {
+	width: 360px;
+}
+
+  input[type=number], input[type=text], select {
+    width: 145px;
+    border: none;
+    float: right;
+    color: #95a5a6;
+    direction: rtl;
+  }
+
+  input[type=checkbox] {
+    float: right;
+  }
+
+#ltv:after {
+  content: '%';
+}
+
+.row
+{
+    display: table-row;
+}
+
+.toggle-button-cover
+{
+    display: table-cell;
+    position: relative;
+    width: 400px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.button-cover
+{
+    height: 100%;
+    position: absolute;
+    width: 400px;
+    margin: 0;
+    background-color: #fff;
+    box-shadow: 0 10px 20px -8px #c5d6d6;
+    border-radius: 4px;
+}
+
+
+.button-cover, .knobs, .layer
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.button
+{
+    position: relative;
+    width: 300px;
+    height: 36px;
+    overflow: hidden;
+}
+
+.button.r, .button.r .layer
+{
+    border-radius: 100px;
+}
+
+.button.b2
+{
+    border-radius: 2px;
+}
+
+.checkbox
+{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.knobs
+{
+    z-index: 2;
+}
+
+.layer
+{
+    width: 100%;
+    background-color: #ebf7fc;
+    transition: 0.3s ease all;
+    z-index: 1;
+}
+
+
+
+/* Button 10 */
+#button-10 .knobs:before, #button-10 .knobs:after, #button-10 .knobs span
+{
+    position: absolute;
+    top: 4px;
+    width: 140px;
+    height: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1;
+    padding: 9px 4px;
+    border-radius: 2px;
+    transition: 0.3s ease all;
+}
+
+#button-10 .knobs:before
+{
+    content: '';
+    left: 4px;
+    background-color: #03A9F4;
+}
+
+#button-10 .knobs:after
+{
+    content: 'Balance Sheet Projection';
+    right: 4px;
+    color: #4e4e4e;
+}
+
+#button-10 .knobs span
+{
+    display: inline-block;
+    left: 4px;
+    color: #fff;
+    z-index: 1;
+}
+
+#button-10 .checkbox:checked + .knobs span
+{
+    color: #4e4e4e;
+}
+
+#button-10 .checkbox:checked + .knobs:before
+{
+    left: 148px;
+    background-color: #03A9F4;
+}
+
+#button-10 .checkbox:checked + .knobs:after
+{
+    color: #fff;
+}
+
+
+
+
+
+#ytd-url {
+  display: block;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  padding: 10px 14px;
+  margin: 20px;
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+  background-color: #143240;
+  border-radius: 4px;
+  box-shadow: 0 10px 20px -5px rgba(20, 50, 64, 0.76);
+}
+
+  </style>
+  
+  
+    <script type="text/javascript" src="/eel.js"></script> 
+</head>
+
+
+
+<body>
+  <div style="background-color: #fff; width: 1100px; box-shadow: 0 10px 20px -5px rgba(20, 50, 64, 0.76); padding: 40px; margin: auto;">
+    
+	
+<h1>LTMs</h1>
+
+<h2>Foreword to the Curve Enquirer</h2>
+
+<p>
+    The curve enquirer is a tool which allows users to investigate some of the values produced and used by the main balance sheet projection model. It makes various simplifying assumptions, including that:
+    <ul>
+        <li>projections are run with steps of one year;</li>
+        <li>all annuity policies pay amount 1 per annum in arrears; and</li>
+        <li>all LTM policies have initial loan amount of 1</li>
+    </ul>
+</p>
+
+<h2>What Is An LTM?</h2>
+
+<p>An Lifetime Mortgage (LTM) is a product which allows individuals to borrow money, using their property as collateral whilst still retaining ownership of the property. An LTM differs from a commercial mortgage in that, rather than gradually paying off the loan over time, the borrower has the option to repay the loan only once they have died (or entered into long-term care) using the proceeds from the sale of their property at this time.</p>
+
+<p>The borrower will also have the option to voluntarily repay their loan balance early (known as a <b>voluntary redemption</b>). However, doing so may carry a penalty known as an <b>early redemption charge</b>).</p>
+
+<h2>What is a NNEG on an LTM?</h2>
+
+<p>If the value of the property exceeds the value of the loan at the time it is redeemed, then it is common for the borrower's other assets to be ring-fenced so that the amount repaid is capped at the value of the property. This cap is commonly referred to as a No-Negative Equity Guarantee (NNEG).</p>
+
+<h2>Expected Cashflows</h2>
+
+<p>The expected cashflow from an LTM at each future point in time are influenced by various factors including (but not limited to):</p>
+<ul>
+	<li>Decrement probabilities</li>
+	<li>LTV</li>
+	<li>HPI assumption</li>
+</ul>
+
+
+<h2>Projecting Expected Redemption Cashflows</h2>
+
+<p>Suppose we have a borrower aged 65 and that the only possible decrement is death (i.e. we are ignoring the possibility of a voluntary early redemption).</p>
+
+<p>The probability that the loan is redeemed in each of the next 50 years can be inspected by populating the curve enquirer with the following inputs:</p>
+
+<img src="tutorial_images/setup1.png">
+
+
+<p>This will give the following result:</p>
+
+
+<img src="tutorial_images/result1.png">
+
+
+
+<p>Note that the above graph peaks at around the 20th year of the loan term, so this is the time at which redemptions are most likely.</p>
+
+<p>We can also use the curve enquirer to see the accumulated loan balance at each future point in time (assuming an AER of 7% is applicable to the loan) by using the following inputs:</p>
+
+
+
+<img src="tutorial_images/setup2.png">
+
+
+<p>The output of this run should look as follows:</p>
+
+
+<img src="tutorial_images/result2.png">
+
+
+<p>The expected redemption cashflows of the LTM for each year is then equal to the probability that the loan is redeemed in that year (as shown in the first of the two graphs above) multiplied by the loan balance at that point in time (shown in the second of the two graphs above). We can view the profile of the expected redemption cashflows using the curve enquirer by using the following inputs:</p>
+
+
+<img src="tutorial_images/setup3.png">
+
+
+<p>This gives the following result:</p>
+
+
+<img src="tutorial_images/result3.png">
+
+
+
+<h2>Projecting Intrinsic NNEG Cashflows</h2>
+
+<p>Recall, from above, that LTMs typically have an embedded guarantee (known as the no-negative equity guarantee, or "NNEG") which means that the amount repaid cannot exceed the value of the borrower's property at the time that the loan is redeemed. If the loan is redeemed at an earlier point in time then it is unlikely that the value of the loan will exceed the value of the property (in which case the NNEG is said to "bite"). However, if house price inflation (HPI) is less than the rate at which the loan balance rolls-up then it is possible that the NNEG will bite at later times.</p>
+
+<p>Assuming a rate of HPI of 3% and an LTV of 40%, we can use the curve enquirer to plot the accumulated loan value and the projected property value over time using the following inputs:</p>
+
+
+<img src="tutorial_images/setup4.png">
+
+
+<p>This gives the result</p>
+
+
+<img src="tutorial_images/result4.png">
+
+
+<p>We can see from the above that, under our chosen assumption for HPI, the value of the loan will exceed the value of the borrower's property after approximately 24 years. Thus, if the loan was redeemed before this point then the intrinsic NNEG would be zero and after this point the intrinsic NNEG would gradually increase. We can see the profile of the intrinsic NNEG using the curve enquirer using the following setup:</p>
+
+
+<img src="tutorial_images/setup5.png">
+
+
+<p>As expected, this is zero for approximately 24 years and then increases exponentially beyond this point:</p>
+
+
+<img src="tutorial_images/result5.png">
+
+
+<p>We can then multiply the projected value of the intrinsic NNEG at each year by the probability of the loan being redeemed in that year to obtain the expected intrinsic NNEG cashflows. Using the curve enquirer with the setup</p>
+
+
+<img src="tutorial_images/setup6.png">
+
+
+<p>We see that this looks as follows:</p>
+
+
+<img src="tutorial_images/result6a.png">
+
+<p>The expected LTM cashflows net of intrinsic NNEG are thus the expected redemption cashflows minus the expected intrinsic NNEG cashflows. We can plot all of these curves on the same graph using the curve equirer (by copying the above set-up, but also checking "redemptions" and "aggregate"):</p>
+
+
+<img src="tutorial_images/result6b.png">
+
+
+<p>We can see that this has had the effect of reducing the expected LTM cashflow at durations past the 24 year mark.</p>
+
+
+  </div>
+
+
+  <a href="" target="_blank" id="ytd-url">Launch Curve-Enquirer</a>
+
+
+</body>
+
+
+</html>

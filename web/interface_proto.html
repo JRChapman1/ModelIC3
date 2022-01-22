@@ -1,0 +1,180 @@
+<!DOCTYPE html> 
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+		<title>ToyIC</title>
+
+		<link rel="stylesheet" href="css/main.css">
+		<script type="text/javascript" src="/eel.js"></script> 
+	</head>
+	<body style="margin: 0; padding: 0; background-color: #ecf0f1; overflow: hidden;" onload="get_output_dirs()">
+
+
+		<div style="background-color: #2c3e50; border-bottom: 2px solid #c0392b; padding: 10px 50px; margin: 0;">
+
+<!--
+			<div style="border: 3px solid black; display: inline-block;">
+				<p style="display: inline; margin-right: 10px;">Starting Capital </p> <input type="number" id="starting_cap" value=0><br><br>
+				<p style="display: inline; margin-right: 10px;">Proportional Reinsurance Percentage </p> <input type="number" id="prop_reins_perc" value=0><br><br>
+				<p style="display: inline; margin-right: 10px;">Initial Number of Annuity Policies </p> <input type="number" id="starting_ann_pols" value=0><br><br>
+				<p style="display: inline; margin-right: 10px;">Initial Number of ERM Policies </p> <input type="number" id="starting_erm_pols" value=0><br><br>
+				<p style="display: inline; margin-right: 10px;">New Annuity Business per Step</p> <input type="number" id="ann_nb" value=0><br><br>
+				<p style="display: inline; margin-right: 10px;">Margin on Annuity Business </p> <input type="number" id="ann_margin" value=0><br><br>
+				<p style="display: inline; margin-right: 10px;">New ERM Business per Step </p> <input type="number" id="erm_nb" value=0><br><br>
+				<p style="display: inline; margin-right: 10px;">Include Deferred Annuities </p> <input type="checkbox" id="incl_defs" value=0>
+			</div>
+
+-->		
+			<div style="display: inline-block;">
+				<table style='display: inline-block; border: solid 2px #e74c3c; padding: 20px; margin: 40px 0; border-collapse: collapse; background-color: #ecf0f1;'>
+					<tr>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Starting Capital</p>
+						</td>
+						<td>
+							<input type="number" id="starting_cap" value=0>
+						</td>
+						<td style="width: 50px;"></td>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Flat HPI Assumption</p>
+						</td>
+						<td>
+							<input type="number" id="hpi_assumption" value=0.03>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Proportional Reinsurance Percentage</p>
+						</td>
+						<td>
+							<input type="number" id="prop_reins_perc" value=0>
+						</td>
+						<td style="width: 50px;"></td>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Interest Rate Curve</p>
+						</td>
+						<td>
+							<select id="int_rate_curve" value="flat_spot_4pc">
+								<option value='flat_spot_4pc'>4% PA Flat</option>
+								<option value='eiopa_spot_annual'>EIOPA</option>
+								<option value='boe_spot_annual'>BofE</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Initial Number of Annuity Policies</p>
+						</td>
+						<td>
+							<input type="number" id="starting_ann_pols" value=10000>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Initial Number of ERM Policies</p>
+						</td>
+						<td>
+							<input type="number" id="starting_erm_pols" value=0>
+						</td>
+					</tr>
+					<tr>
+						<td><p style="display: inline; margin-right: 10px;">New Annuity Business per Step</p>
+						</td>
+						<td>
+							<input type="number" id="ann_nb" value=0>
+						</td>
+						<td style="width: 50px;"></td>
+						<td><p style="display: inline; margin-right: 10px;">Projection Term (Years)</p>
+						</td>
+						<td>
+							<input type="number" id="proj_term" value=40>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Margin on Annuity Business</p>
+						</td>
+						<td>
+							<input type="number" id="ann_margin" value=0>
+						</td>
+						<td style="width: 50px;"></td>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Steps PY</p>
+						</td>
+						<td>
+							<input type="number" id="steps_py" value=1>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p style="display: inline; margin-right: 10px;">New ERM Business per Step</p>
+						</td>
+						<td>
+							<input type="number" id="erm_nb" value=0>
+						</td>
+						<td style="width: 50px;"></td>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Number of Simulations</p>
+						</td>
+						<td>
+							<input type="number" id="num_sims" value=10>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Include Deferred Annuities</p>
+						</td>
+						<td>
+							<input type="checkbox" id="incl_defs" value=0>
+						</td>
+						<td style="width: 50px;"></td>
+						<td>
+							<p style="display: inline; margin-right: 10px;">Run Name</p>
+						</td>
+						<td>
+							<input type="text" id="run_name" value="">
+						</td>
+					</tr>
+				</table>
+
+				<br>
+
+				<button id="run-projection" style="float: right; margin-bottom: 25px; background-color: #c0392b; border: solid 2px black; font-size: 12pt; padding: 10px 20px; cursor: pointer;"><b>Run Projection</b></button>
+			</div>
+
+		</div>
+
+
+		<div id="past_runs" style="height: 800px; background-color: #dcdde1; display: inline-block; float: right; overflow: scroll;">
+			
+		</div>
+		<img src="" id="graph" style="margin: 35px;">
+		<button style='color: #e74c3c; border: solid 2px #e74c3c; display: none; margin: 20px; cursor: pointer;' id='delete_run_btn'>Delete Run</button>
+		<input style='display: none;' id='run_id'>
+
+
+
+
+		<!-- The Modal -->
+		<div id="myModal" class="modal">
+
+		  <!-- Modal content -->
+		  <div class="modal-content">
+		    <p style="margin: 0; padding: 0;">Running...</p>
+		    <div id="myProgress">
+			  <div id="myBar"></div>
+			</div>
+			<p style="margin: 0; padding: 0; float: right;" id="perc">0%</p>
+			<br>
+		  </div>
+
+		</div>
+
+
+	</body>
+	<script src="js/main.js"></script>
+</html>
