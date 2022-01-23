@@ -9,8 +9,8 @@ from matplotlib import pyplot as plt
 class Annuity:
     def __init__(self, int_rate_curve, steps_py):
         self.steps_py = steps_py
-        self.BaseMortality = Mortality(None, steps_py)
-        self.StressMortality = Mortality('SII', steps_py)
+        self.BaseMortality = Mortality(steps_py, None)
+        self.StressMortality = Mortality(steps_py, 'SII')
         self.BaseIR = InterestRate(int_rate_curve, steps_py, None)
         self.StressIR = InterestRate(int_rate_curve, steps_py, 'SII')
         self.annuity_factors_cache = {}

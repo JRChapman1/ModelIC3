@@ -1,3 +1,4 @@
+# Import external libraries
 import pandas as pd
 import numpy as np
 
@@ -90,6 +91,6 @@ def apply_stress(base_mortality_curve, stress):
 
 
 if __name__ == '__main__':
-    model = Mortality(1)
+    model = Mortality(1, 'SII')
     foo = model.prob_death()
     print(foo)

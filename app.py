@@ -24,8 +24,9 @@ def get_random_name(starting_cap, hpi_assumption, prop_reins_perc, int_rate_curv
 	eel.display_results(run_id)
 
 @eel.expose
-def get_random_number(model_of_interest, variable_of_interest, basis_of_interest, age_of_interest, ltv_of_interest, aer_of_interest, hpi_of_interest, output_int_nneg, output_mkt_nneg, output_reds, agg_cfs, output_loan_val, output_prop_val, output_nneg_val, output_agg_val, output_mkt_agg_val):
-	run_id = call_curve_enquirer(model_of_interest, variable_of_interest, basis_of_interest, age_of_interest, ltv_of_interest, aer_of_interest, hpi_of_interest, output_int_nneg, output_mkt_nneg, output_reds, agg_cfs, output_loan_val, output_prop_val, output_nneg_val, output_agg_val, output_mkt_agg_val)
+def get_random_number(model_of_interest, variable_of_interest, basis_of_interest, age_of_interest, ltv_of_interest, aer_of_interest, hpi_of_interest, output_loan_val, output_prop_val, output_int_nneg_val, output_mkt_nneg_val, output_int_agg_val, output_mkt_agg_val, output_ifrs_val):
+	print(f'call_curve_enquirer({model_of_interest}, {variable_of_interest}, {basis_of_interest}, {age_of_interest}, {ltv_of_interest}, {aer_of_interest}, {hpi_of_interest}, {output_loan_val}, {output_prop_val}, {output_int_nneg_val}, {output_mkt_nneg_val}, {output_int_agg_val}, {output_mkt_agg_val}, {output_ifrs_val})')
+	run_id = call_curve_enquirer(model_of_interest, variable_of_interest, basis_of_interest, age_of_interest, ltv_of_interest, aer_of_interest, hpi_of_interest, output_loan_val, output_prop_val, output_int_nneg_val, output_mkt_nneg_val, output_int_agg_val, output_mkt_agg_val, output_ifrs_val)
 	print(run_id)
 	eel.display_results(run_id)
 
@@ -89,7 +90,7 @@ def call_run_sim(starting_cap, hpi_assumption, prop_reins_perc, int_rate_curve, 
 	return str(run_id)
 
 
-def call_curve_enquirer(model_of_interest, variable_of_interest, basis_of_interest, age_of_interest, ltv_of_interest, aer_of_interest, hpi_of_interest, output_int_nneg, output_mkt_nneg, output_reds, agg_cfs, output_loan_val, output_prop_val, output_nneg_val, output_agg_val, output_mkt_agg_val):
+def call_curve_enquirer(model_of_interest, variable_of_interest, basis_of_interest, age_of_interest, ltv_of_interest, aer_of_interest, hpi_of_interest, output_loan_val, output_prop_val, output_int_nneg_val, output_mkt_nneg_val, output_int_agg_val, output_mkt_agg_val, output_ifrs_val):
 
 	if model_of_interest == 'Annuity':
 
@@ -97,7 +98,6 @@ def call_curve_enquirer(model_of_interest, variable_of_interest, basis_of_intere
 
 		df_ann_pols = pd.DataFrame([[1, age_of_interest, 1]], columns=['Policy ID', 'Age', 'Annual Amt'])
 		AnnuityModel = Annuity('flat_spot_4pc', 1)
-		MortalityModel = Mortality(None, 1)
 		if variable_of_interest == 'Expected Cashflows':
 			res = AnnuityModel.expected_cfs(df_ann_pols)
 		else:
@@ -110,36 +110,56 @@ def call_curve_enquirer(model_of_interest, variable_of_interest, basis_of_intere
 		hpi_of_interest /= 100
 
 		df_ltm_pols = pd.DataFrame([[age_of_interest, 1, 1/ltv_of_interest, aer_of_interest, 0]], columns=['Age', 'Loan Value', 'Property Value', 'AER', 'Spread'])
-		EqRelModel = ERM('flat_spot_4pc', 1, hpi_assumption=hpi_of_interest)
+		EqRelModel = ERM('flat_spot_4pc')
 		if variable_of_interest == 'Expected Cashflows':
 			res = pd.DataFrame()
-			if output_reds:
-				res['Redemptions'] = EqRelModel.expected_redemption_cfs(df_ltm_pols).iloc[:, 0]
-			if output_int_nneg:
-				res['Intrinsic NNEG'] = EqRelModel.expected_int_nneg_cfs(df_ltm_pols).iloc[:, 0]
-			if agg_cfs:
-				res['Aggregate'] = EqRelModel.expected_redemption_cfs_net_of_int_nneg(df_ltm_pols)
+			if output_loan_val:
+				res['Redemptions'] = EqRelModel.expected_redemption_cfs(df_ltm_pols)
+			if output_int_nneg_val:
+				# TODO: Remove prop shock hardcoding
+				res['Intrinsic NNEG'] = EqRelModel.expected_int_nneg_cfs(df_ltm_pols, hpi_of_interest, None).iloc[:, 0]
+			if output_int_agg_val:
+				# TODO: Remove prop shock hardcoding
+				res['Redemptions Net of Int NNEG'] = EqRelModel.expected_redemption_cfs_net_of_int_nneg(df_ltm_pols, hpi_of_interest, None)
+			if output_mkt_nneg_val:
+				# TODO: Remove hpi vol and prop shock hardcoding
+				res['Market NNEG'] = EqRelModel.expected_mkt_nneg_cfs(df_ltm_pols, hpi_of_interest, 0.12, None, True)
+			if output_mkt_agg_val:
+				# TODO: Remove hpi vol and prop shock hardcoding
+				res['Redemptions Net of Mkt NNEG'] = EqRelModel.expected_redemption_cfs_net_of_mkt_nneg(df_ltm_pols, hpi_of_interest, 0.12, None)
 		elif variable_of_interest == "Projected Values":
 			res = pd.DataFrame()
 			if output_loan_val:
 				res['Loan Value'] = [(1 + aer_of_interest) ** t for t in range(0, 51)]
 			if output_prop_val:
 				res['Property Value'] = [(1/ltv_of_interest) * (1 + hpi_of_interest) ** t for t in range(0, 51)]
-			if output_nneg_val:
-				res['NNEG Value'] = [max((1 + aer_of_interest) ** t - (1/ltv_of_interest) * (1 + hpi_of_interest) ** t, 0) for t in range(0, 51)]
-			if output_mkt_nneg:
-				res['Market NNEG'] = EqRelModel.projected_nneg_mkt_value(df_ltm_pols, hpi_drift=hpi_of_interest).iloc[:51, 0]
-			if output_agg_val:
+			if output_int_nneg_val:
+				res['Intrinsic NNEG'] = [max((1 + aer_of_interest) ** t - (1/ltv_of_interest) * (1 + hpi_of_interest) ** t, 0) for t in range(0, 51)]
+			if output_mkt_nneg_val:
+				# TODO: Remove hpi vol and prop shock hardcoding
+				res['Market NNEG'] = EqRelModel.projected_nneg_mkt_value(df_ltm_pols, hpi_of_interest, 0.12, None).iloc[:51, 0]
+			if output_int_agg_val:
 				res['Loan Net of Int NNEG'] = [min((1 + aer_of_interest) ** t, (1/ltv_of_interest) * (1 + hpi_of_interest) ** t) for t in range(0, 51)]
 			if output_mkt_agg_val:
-				res['Loan Net of Mkt NNEG'] = [(1 + aer_of_interest) ** t for t in range(0, 51)] - EqRelModel.projected_nneg_mkt_value(df_ltm_pols, hpi_drift=hpi_of_interest).iloc[:51, 0]
-
+				# TODO: Remove hpi vol and prop shock hardcoding
+				res['Loan Net of Mkt NNEG'] = [(1 + aer_of_interest) ** t for t in range(0, 51)] - EqRelModel.projected_nneg_mkt_value(df_ltm_pols, hpi_of_interest, 0.12, None).iloc[:51, 0]
+			if output_ifrs_val:
+				exp_erm_red_cfs = EqRelModel.expected_redemption_cfs(df_ltm_pols)#, hpi_of_interest, 0.12)
+				df_ltm_pols['Spread'] = EqRelModel.spread(df_ltm_pols, exp_erm_red_cfs).transpose()
+				tmp_df_ltm_pols = df_ltm_pols.copy()
+				# TODO: Remove loop
+				for t in range(0, 51):
+					# TODO: Remove hpi vol and prop shock hardcoding
+					res.loc[t, 'IFRS'] = EqRelModel.value(tmp_df_ltm_pols, hpi_of_interest, 0.12, None, t)
+					tmp_df_ltm_pols['Loan Value'] *= (1 + tmp_df_ltm_pols['AER'])
+					tmp_df_ltm_pols['Age'] += 1
+					tmp_df_ltm_pols['Property Value'] *= (1 + hpi_of_interest)
 
 		else:
 			res = "ERROR"
 
 	if model_of_interest == 'Mortality':
-		MortalityModel = Mortality(None, 1)
+		MortalityModel = Mortality(1, None)
 		if variable_of_interest == 'qx Curve':
 			res = pd.DataFrame(MortalityModel.q([x for x in range(age_of_interest, 121)]))
 		elif variable_of_interest == 'IF Prob':
@@ -172,7 +192,8 @@ def delete_run(run_id):
 	shutil.rmtree(f'web/outputs/{run_id}')
 
 if __name__ == '__main__':
-	#call_curve_enquirer('Annuity', 'Expected Cashflows', 'Best Estimate', 65, 40, 7, True, True, True)
+	foo = call_curve_enquirer('LTM', 'Expected Cashflows', 'Best Estimate', 65, 40, 7, 3, True, True, True, True, True, True, True)
+	print(foo)
 	#print(get_output_dirs())
 	eel.start('index.html')
 	#get_output_dirs()

@@ -1,3 +1,4 @@
+# Import external libraries
 import pandas as pd
 
 
@@ -64,10 +65,11 @@ class InterestRate:
             df_spot_curve = self.spot_curve(rebase_step=rebase_step)
 
             # Calculate discount curve from the spot curve, adding a spread if necessary
-            df_discount_curve = (1 + spread + df_spot_curve['Rate']) ** (-df_spot_curve.index)
+            df_discount_curve = 1 + spread.to_numpy().reshape(1, -1) + df_spot_curve['Rate'].to_numpy().reshape(-1,1)# ** (-df_spot_curve.index)
+            df_discount_curve = pd.DataFrame(df_discount_curve, index=df_spot_curve.index).pow(-df_spot_curve.index, axis=0)
 
             # Cache the calculated discount curve
-            self.cache[f'discount_curve_{rebase_step}_{spread}'] = pd.DataFrame(df_discount_curve, columns=['Rate'])
+            self.cache[f'discount_curve_{rebase_step}_{spread}'] = df_discount_curve
 
         # Returned cached curve
         return self.cache[f'discount_curve_{rebase_step}_{spread}']
