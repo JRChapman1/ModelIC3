@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlaskApp</title>
+</head>
+<body>
+		<form action="" method="get">
+			model_of_interest<br><input type='text' name='model_of_interest'><br><br>
+			variable_of_interest<br><input type='text' name='variable_of_interest'><br><br>
+			basis_of_interest<br><input type='text' name='basis_of_interest'><br><br>
+			age_of_interest<br><input type='text' name='age_of_interest'><br><br>
+			ltv_of_interest<br><input type='text' name='ltv_of_interest'><br><br>
+			aer_of_interest<br><input type='text' name='aer_of_interest'><br><br>
+			hpi_of_interest<br><input type='text' name='hpi_of_interest'><br><br>
+			output_loan_val<br><input type='text' name='output_loan_val'><br><br>
+			output_prop_val<br><input type='text' name='output_prop_val'><br><br>
+			output_int_nneg_val<br><input type='text' name='output_int_nneg_val'><br><br>
+			output_mkt_nneg_val<br><input type='text' name='output_mkt_nneg_val'><br><br>
+			output_int_agg_val<br><input type='text' name='output_int_agg_val'><br><br>
+			output_mkt_agg_val<br><input type='text' name='output_mkt_agg_val'><br><br>
+			output_ifrs_val<br><input type='text' name='output_ifrs_val'><br><br>
+			<input type="submit" value="Convert to Fahrenheit">
+		</form>
+
+        <div id="output">
+            <img src="{{ graph_image }}">
+        </div>
+</body>
+</html>

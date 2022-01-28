@@ -2,7 +2,6 @@ from ERM import ERM
 from Mortality import Mortality
 from InterestRates import InterestRate
 from BusinessOperations import BusinessOperations as BizOps
-from matplotlib import pyplot as plt
 import pandas as pd
 
 
@@ -40,10 +39,10 @@ class LTMNote:
             tmp_lapse_rate_dwn=[0.005] * 104
             tmp_lapse_rate_up = [0.04] * 5 + [self.lapse_rate] * 99
 
-        MdlEqRelDwn = ERM(self.int_rate_curve, self.steps_py, hpi_assumption=tmp_hpi_assumption, prop_shock=tmp_prop_shock, mortality_stress=f'{stress_level}_down', lapse_rate=tmp_lapse_rate_dwn)
+        MdlEqRelDwn = ERM(self.int_rate_curve, self.steps_py, mortality_stress=f'{stress_level}_down', lapse_rate=tmp_lapse_rate_dwn)
         stress_dwn_cfs = MdlEqRelDwn.expected_redemption_cfs(policy.copy()).sum(axis=1)[:61]
 
-        MdlEqRelUp = ERM(self.int_rate_curve, self.steps_py, hpi_assumption=tmp_hpi_assumption, prop_shock=tmp_prop_shock, mortality_stress=f'{stress_level}_up', lapse_rate=tmp_lapse_rate_up)
+        MdlEqRelUp = ERM(self.int_rate_curve, self.steps_py, mortality_stress=f'{stress_level}_up', lapse_rate=tmp_lapse_rate_up)
         stress_up_cfs = MdlEqRelUp.expected_redemption_cfs(policy.copy()).sum(axis=1)[:61]
 
         unshaped_note_cfs = pd.concat([stress_dwn_cfs, stress_up_cfs], axis=1).min(axis=1)
@@ -82,10 +81,4 @@ class LTMNote:
 if __name__ == '__main__':
     policy = BizOps.write_ltm_business(10000, steps_py=1)
     l = LTMNote(policy, 'flat_spot_4pc', 1)
-    res = 0
-    for i in range(1, 6):
-        tmp = l.note_risk_free_value(f"Note {i}")
-        res += tmp
-        print(i, tmp)
-    print(f'Total = {res}')
-
+    res = l.note_pcfs("AAA")
